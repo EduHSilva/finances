@@ -2,7 +2,7 @@
 import { sub } from 'date-fns'
 import type { DropdownMenuItem } from '@nuxt/ui'
 import type { Period, Range } from '~/types'
-import DashLayout from '~/layouts/dashLayout.vue'
+import DashLayout from '~/layouts/DashLayout.vue'
 
 const { isNotificationsSlideoverOpen } = useDashboard()
 
