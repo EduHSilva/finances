@@ -2,7 +2,6 @@
 import * as z from 'zod'
 import type { FormSubmitEvent, AuthFormField } from '@nuxt/ui'
 import { useUser } from '~/plugins/userService'
-import DashLayout from '~/layouts/dashLayout.vue'
 
 const toast = useToast()
 
