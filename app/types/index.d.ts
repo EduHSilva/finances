@@ -1,5 +1,4 @@
 import type { AvatarProps } from '@nuxt/ui'
-import ItemRecurrence from '~/components/recurrences/ItemRecurrence.vue'
 
 export type TransactionStatus = 'PENDING' | 'unsubscribed'
 export type SaleStatus = 'paid' | 'failed' | 'refunded'

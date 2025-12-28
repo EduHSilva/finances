@@ -215,22 +215,6 @@ const pagination = ref({
           />
 
           <div class="flex flex-wrap items-center gap-1.5">
-            <CustomersDeleteModal :count="table?.tableApi?.getFilteredSelectedRowModel().rows.length">
-              <UButton
-                v-if="table?.tableApi?.getFilteredSelectedRowModel().rows.length"
-                label="Delete"
-                color="error"
-                variant="subtle"
-                icon="i-lucide-trash"
-              >
-                <template #trailing>
-                  <UKbd>
-                    {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length }}
-                  </UKbd>
-                </template>
-              </UButton>
-            </CustomersDeleteModal>
-
             <USelect
               v-model="statusFilter"
               :items="[
@@ -253,7 +237,7 @@ const pagination = ref({
                     type: 'checkbox' as const,
                     checked: column.getIsVisible(),
                     onUpdateChecked(checked: boolean) {
-                      table?.tableApi?.getColumn(column.id)?.toggleVisibility(!!checked)
+                      table?.tableApi?.getColumn(column.id)?.toggleVisibility(checked)
                     },
                     onSelect(e?: Event) {
                       e?.preventDefault()
