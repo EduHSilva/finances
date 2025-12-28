@@ -9,12 +9,10 @@ const df = new DateFormatter('en-US', {
 const selected = defineModel<Range>({ required: true })
 
 const ranges = [
-  { label: 'Last 7 days', days: 7 },
-  { label: 'Last 14 days', days: 14 },
-  { label: 'Last 30 days', days: 30 },
-  { label: 'Last 3 months', months: 3 },
-  { label: 'Last 6 months', months: 6 },
-  { label: 'Last year', years: 1 }
+  { label: $t('thisMonth'), preset: 'currentMonth' },
+  { label: $t('lastMonth'), preset: 'lastMonth' },
+  { label: $t('nextMonth'), preset: 'nextMonth' },
+  { label: $t('thisYear'), preset: 'thisYear' }
 ]
 
 const toCalendarDate = (date: Date) => {
@@ -37,48 +35,85 @@ const calendarRange = computed({
     }
   }
 })
-
-const isRangeSelected = (range: { days?: number, months?: number, years?: number }) => {
+const isRangeSelected = (range: { preset: string }) => {
   if (!selected.value.start || !selected.value.end) return false
 
-  const currentDate = today(getLocalTimeZone())
-  let startDate = currentDate.copy()
+  const tz = getLocalTimeZone()
+  const todayDate = today(tz)
 
-  if (range.days) {
-    startDate = startDate.subtract({ days: range.days })
-  } else if (range.months) {
-    startDate = startDate.subtract({ months: range.months })
-  } else if (range.years) {
-    startDate = startDate.subtract({ years: range.years })
+  let startDate: CalendarDate
+  let endDate: CalendarDate
+
+  switch (range.preset) {
+    case 'currentMonth':
+      startDate = todayDate.set({ day: 1 })
+      endDate = startDate.add({ months: 1 }).subtract({ days: 1 })
+      break
+    case 'lastMonth':
+      startDate = todayDate.set({ day: 1 }).subtract({ months: 1 })
+      endDate = startDate.add({ months: 1 }).subtract({ days: 1 })
+      break
+    case 'nextMonth':
+      startDate = todayDate.set({ day: 1 }).add({ months: 1 })
+      endDate = startDate.add({ months: 1 }).subtract({ days: 1 })
+      break
+    case 'thisYear':
+      startDate = todayDate.set({ month: 1, day: 1 })
+      endDate = todayDate.set({ month: 12, day: 31 })
+      break
+    default:
+      return false
   }
 
   const selectedStart = toCalendarDate(selected.value.start)
   const selectedEnd = toCalendarDate(selected.value.end)
 
-  return selectedStart.compare(startDate) === 0 && selectedEnd.compare(currentDate) === 0
+  return (
+    selectedStart.compare(startDate) === 0
+    && selectedEnd.compare(endDate) === 0
+  )
 }
 
-const selectRange = (range: { days?: number, months?: number, years?: number }) => {
-  const endDate = today(getLocalTimeZone())
-  let startDate = endDate.copy()
+const selectRange = (range: { preset: string }) => {
+  const tz = getLocalTimeZone()
+  const todayDate = today(tz)
 
-  if (range.days) {
-    startDate = startDate.subtract({ days: range.days })
-  } else if (range.months) {
-    startDate = startDate.subtract({ months: range.months })
-  } else if (range.years) {
-    startDate = startDate.subtract({ years: range.years })
+  let startDate: CalendarDate
+  let endDate: CalendarDate
+
+  switch (range.preset) {
+    case 'currentMonth':
+      startDate = todayDate.set({ day: 1 })
+      endDate = startDate.add({ months: 1 }).subtract({ days: 1 })
+      break
+    case 'lastMonth':
+      startDate = todayDate.set({ day: 1 }).subtract({ months: 1 })
+      endDate = startDate.add({ months: 1 }).subtract({ days: 1 })
+      break
+    case 'nextMonth':
+      startDate = todayDate.set({ day: 1 }).add({ months: 1 })
+      endDate = startDate.add({ months: 1 }).subtract({ days: 1 })
+      break
+    case 'thisYear':
+      startDate = todayDate.set({ month: 1, day: 1 })
+      endDate = todayDate.set({ month: 12, day: 31 })
+      break
+    default:
+      return
   }
 
   selected.value = {
-    start: startDate.toDate(getLocalTimeZone()),
-    end: endDate.toDate(getLocalTimeZone())
+    start: startDate.toDate(tz),
+    end: endDate.toDate(tz)
   }
 }
 </script>
 
 <template>
-  <UPopover :content="{ align: 'start' }" :modal="true">
+  <UPopover
+    :content="{ align: 'start' }"
+    :modal="true"
+  >
     <UButton
       color="neutral"
       variant="ghost"
@@ -100,7 +135,10 @@ const selectRange = (range: { days?: number, months?: number, years?: number }) 
       </span>
 
       <template #trailing>
-        <UIcon name="i-lucide-chevron-down" class="shrink-0 text-dimmed size-5 group-data-[state=open]:rotate-180 transition-transform duration-200" />
+        <UIcon
+          name="i-lucide-chevron-down"
+          class="shrink-0 text-dimmed size-5 group-data-[state=open]:rotate-180 transition-transform duration-200"
+        />
       </template>
     </UButton>
 

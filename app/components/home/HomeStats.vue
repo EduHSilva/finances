@@ -1,64 +1,66 @@
 <script setup lang="ts">
-import type { Period, Range, Stat } from '~/types'
+import type { Stat } from '~/types'
 
 const props = defineProps<{
-  period: Period
-  range: Range
+  data: {
+    incomes: number
+    expanses: number
+    investments: number
+    balance: number
+  }
 }>()
 
 function formatCurrency(value: number): string {
-  return value.toLocaleString('en-US', {
+  if (navigator.language === 'en') {
+    return value.toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 2
+    })
+  }
+  return value.toLocaleString('pt-BR', {
     style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0
+    currency: 'BRL',
+    maximumFractionDigits: 2
   })
 }
 
 const baseStats = [{
-  title: 'Customers',
-  icon: 'i-lucide-users',
-  minValue: 400,
-  maxValue: 1000,
-  minVariation: -15,
-  maxVariation: 25
-}, {
-  title: 'Conversions',
-  icon: 'i-lucide-chart-pie',
-  minValue: 1000,
-  maxValue: 2000,
-  minVariation: -10,
-  maxVariation: 20
-}, {
-  title: 'Revenue',
-  icon: 'i-lucide-circle-dollar-sign',
-  minValue: 200000,
-  maxValue: 500000,
-  minVariation: -20,
-  maxVariation: 30,
+  title: $t('income'),
+  icon: 'i-lucide-banknote-arrow-up',
+  value: props.data.incomes,
+  variation: 1,
   formatter: formatCurrency
 }, {
-  title: 'Orders',
-  icon: 'i-lucide-shopping-cart',
-  minValue: 100,
-  maxValue: 300,
-  minVariation: -5,
-  maxVariation: 15
+  title: $t('expanses'),
+  icon: 'i-lucide-banknote-arrow-down',
+  value: props.data.expanses,
+  variation: 0,
+  formatter: formatCurrency
+}, {
+  title: $t('investments'),
+  icon: 'i-lucide-hand-coins',
+  value: props.data.investments,
+  variation: 1,
+  formatter: formatCurrency
+}, {
+  title: $t('balance'),
+  icon: 'i-lucide-wallet',
+  value: props.data.balance,
+  formatter: formatCurrency,
+  variation: 2
 }]
 
 const { data: stats } = await useAsyncData<Stat[]>('stats', async () => {
   return baseStats.map((stat) => {
-    const value = randomInt(stat.minValue, stat.maxValue)
-    const variation = randomInt(stat.minVariation, stat.maxVariation)
-
     return {
       title: stat.title,
       icon: stat.icon,
-      value: stat.formatter ? stat.formatter(value) : value,
-      variation
+      value: stat.formatter ? stat.formatter(stat.value) : stat.value,
+      variation: stat.variation
     }
   })
 }, {
-  watch: [() => props.period, () => props.range],
   default: () => []
 })
 </script>

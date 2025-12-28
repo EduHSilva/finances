@@ -34,5 +34,18 @@ export default defineNuxtConfig({
         braceStyle: '1tbs'
       }
     }
+  },
+  i18n: {
+    defaultLocale: 'pt',
+    locales: [
+      { code: 'en', name: 'English', file: 'en.json' },
+      { code: 'pt', name: 'Pt', file: 'pt.json' }
+    ],
+    strategy: 'no_prefix',
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'i18n_redirected',
+      redirectOn: 'root'
+    }
   }
 })
