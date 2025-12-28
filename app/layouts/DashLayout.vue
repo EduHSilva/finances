@@ -21,6 +21,21 @@ const links = [[{
     open.value = false
   }
 }, {
+  label: $t('categories'),
+  icon: 'i-lucide-layers-2',
+  to: '/categories',
+  onSelect: () => {
+    open.value = false
+  }
+}, {
+  label: $t('recurrences'),
+  icon: 'i-lucide-calendar-sync',
+  to: '/recurrences',
+  onSelect: () => {
+    open.value = false
+  }
+},
+{
   label: $t('settings'),
   to: '/settings',
   icon: 'i-lucide-settings',
@@ -105,8 +120,8 @@ onMounted(async () => {
       class="bg-elevated/25"
       :ui="{ footer: 'lg:border-t lg:border-default' }"
     >
-      <template #header="{ collapsed }">
-        <TeamsMenu :collapsed="collapsed" />
+      <template #header>
+        {{ $t('finances') }}
       </template>
 
       <template #default="{ collapsed }">

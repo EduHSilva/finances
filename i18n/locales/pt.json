@@ -23,5 +23,17 @@
   "thisMonth": "Esse mês",
   "lastMonth": "Mês passado",
   "nextMonth": "Proximo mes",
-  "thisYear": "Esse ano"
+  "thisYear": "Esse ano",
+  "installmentsResume": "Resumo de parcelados",
+  "recentTransactions": "Ultimas transações",
+  "installmentsQuantity": "Quantidade parcelamentos",
+  "installmentsValue": "Total em dividas parceladas",
+  "categories": "Categorias",
+  "category": "Categoria",
+  "changeStatus": "Trocar status",
+  "installments": "Parcelados",
+  "delete": "Deletar",
+  "payInstallment": "Pagar parcela",
+  "edit": "Editar",
+  "finances": "Finanças"
 }

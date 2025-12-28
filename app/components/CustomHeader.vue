@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from '@nuxt/ui'
 
-const { isNotificationsSlideoverOpen } = useDashboard()
-
 const items = [[{
   label: 'New mail',
   icon: 'i-lucide-send',
@@ -40,27 +38,6 @@ const localeOptions = [
         size="sm"
         @update:model-value="setLocale($event)"
       />
-      <UTooltip
-        text="Notifications"
-        :shortcuts="['N']"
-      >
-        <UButton
-          color="neutral"
-          variant="ghost"
-          square
-          @click="isNotificationsSlideoverOpen = true"
-        >
-          <UChip
-            color="error"
-            inset
-          >
-            <UIcon
-              name="i-lucide-bell"
-              class="size-5 shrink-0"
-            />
-          </UChip>
-        </UButton>
-      </UTooltip>
 
       <UDropdownMenu :items="items">
         <UButton

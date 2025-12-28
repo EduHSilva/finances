@@ -1,15 +1,44 @@
 import type { AvatarProps } from '@nuxt/ui'
+import ItemRecurrence from '~/components/recurrences/ItemRecurrence.vue'
 
-export type UserStatus = 'subscribed' | 'unsubscribed' | 'bounced'
+export type TransactionStatus = 'PENDING' | 'unsubscribed'
 export type SaleStatus = 'paid' | 'failed' | 'refunded'
 
-export interface User {
+export interface Transaction {
   id: number
-  name: string
-  email: string
-  avatar?: AvatarProps
-  status: UserStatus
-  location: string
+  title: string
+  value: number
+  date: Date
+  income: boolean
+  status: TransactionStatus
+}
+
+export interface Category {
+  id: string
+  title: string
+  classification: string
+  goal: number
+  color: string
+}
+
+export interface Recurrence {
+  id: string
+  title: string
+  category: string
+  value: number
+  status: string
+  income: boolean
+  frequency: string
+  day: number
+}
+
+export interface InstallmentItem {
+  id: string
+  title: string
+  category: string
+  value: number
+  installments: number
+  pay: number
 }
 
 export interface Mail {
