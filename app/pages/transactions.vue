@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui'
 import { upperFirst } from 'scule'
-import { getPaginationRowModel } from '@tanstack/table-core'
 import type { Row } from '@tanstack/table-core'
+import { getPaginationRowModel } from '@tanstack/table-core'
 import type { Transaction } from '~/types'
 import DashLayout from '~/layouts/DashLayout.vue'
 import CustomHeader from '~/components/CustomHeader.vue'
+import AddTransactionModal from '~/components/transactions/AddTransactionModal.vue'
 
 const UButton = resolveComponent('UButton')
 const UBadge = resolveComponent('UBadge')
@@ -202,7 +203,9 @@ const pagination = ref({
   <DashLayout>
     <UDashboardPanel id="customers">
       <template #header>
-        <CustomHeader />
+        <CustomHeader>
+          <AddTransactionModal />
+        </CustomHeader>
       </template>
 
       <template #body>

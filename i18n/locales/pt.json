@@ -35,5 +35,13 @@
   "delete": "Deletar",
   "payInstallment": "Pagar parcela",
   "edit": "Editar",
-  "finances": "Finanças"
+  "finances": "Finanças",
+  "newCategory": "Nova categoria",
+  "newCategoryDesc": "Adicione uma nova categoria para suas transações",
+  "name": "Nome",
+  "goal": "Meta (%)",
+  "classification": "Classificação",
+  "cancel": "Cancelar",
+  "save": "Salvar",
+  "color": "Cor"
 }
