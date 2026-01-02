@@ -10,8 +10,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits<{
-  (e: 'edit', section: Category): void
-  (e: 'delete', section: Category): void
+  (e: 'edit', category: Category): void
+  (e: 'delete', category: Category): void
 }>()
 </script>
 
@@ -19,7 +19,7 @@ const emit = defineEmits<{
   <div class="w-full h-full ml-2">
     {{ props.title }}
     <div
-      v-for="(section, index) in props.data"
+      v-for="(category, index) in props.data"
       :key="index"
     >
       <UPageCard
@@ -27,37 +27,34 @@ const emit = defineEmits<{
         class="mb-2 h-20"
       >
         <div class="flex items-center justify-between gap-3">
-          <!-- ESQUERDA -->
           <div>
             <p class="text-sm font-medium">
-              {{ section.title }}
+              {{ category.title }}
             </p>
 
             <div class="flex items-center gap-1.5 text-xs text-muted">
               <span
                 class="inline-block w-2.5 h-2.5 rounded-full"
-                :style="{ backgroundColor: section.color }"
+                :style="{ backgroundColor: category.color }"
               />
-              <span>{{ section.classification }}</span>
+              <span>{{ $t(category.classification.toLowerCase()) }}</span>
             </div>
           </div>
 
-          <!-- DIREITA -->
           <div class="flex items-center gap-3">
             <div class="text-right">
               <p class="text-xs text-muted">
-                Goal
+                {{ $t('goal') }}
               </p>
               <p class="text-base font-semibold leading-tight">
-                {{ section.goal }}
+                {{ category.goal }}
               </p>
             </div>
 
-            <!-- MENU DE AÇÕES -->
             <UDropdownMenu
               :items="[
-                { label: $t('edit'), icon: 'i-lucide-pencil', onSelect: () => emit('edit', section) },
-                { label: $t('delete'), icon: 'i-lucide-trash', color: 'error', onSelect: () => emit('delete', section) }
+                { label: $t('edit'), icon: 'i-lucide-pencil', onSelect: () => emit('edit', category) },
+                { label: $t('delete'), icon: 'i-lucide-trash', color: 'error', onSelect: () => emit('delete', category) }
               ]"
               :content="{ align: 'end' }"
             >

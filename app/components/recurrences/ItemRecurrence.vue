@@ -7,6 +7,11 @@ const props = defineProps({
     required: true
   }
 })
+
+const emit = defineEmits<{
+  (e: 'edit', recurrence: Recurrence): void
+  (e: 'delete', recurrence: Recurrence): void
+}>()
 </script>
 
 <template>
@@ -32,7 +37,6 @@ const props = defineProps({
 
     <div class="text-sm text-muted flex flex-wrap gap-1">
       <span>{{ props.recurrence.income ? $t('income') : $t('expanse') }}</span> •
-      <span>{{ props.recurrence.frequency }}</span> •
       <span>{{ props.recurrence.day }}</span>
       <template v-if="props.recurrence.category">
         • <span>{{ props.recurrence.category }}</span>
@@ -40,7 +44,6 @@ const props = defineProps({
     </div>
   </div>
 
-  <!-- DIREITA -->
   <div class="flex items-center gap-4">
     <span
       class="font-semibold"
@@ -51,8 +54,8 @@ const props = defineProps({
 
     <UDropdownMenu
       :items="[
-        { label: $t('changeStatus'), icon: 'i-lucide-check-square' },
-        { label: $t('delete'), icon: 'i-lucide-trash', color: 'error' }
+        { label: $t('edit'), icon: 'i-lucide-edit', onSelect: () => emit('edit', recurrence) },
+        { label: $t('delete'), icon: 'i-lucide-trash', color: 'error', onSelect: () => emit('delete', recurrence) }
       ]"
       :content="{ align: 'end' }"
     >

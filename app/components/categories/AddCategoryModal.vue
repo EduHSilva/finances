@@ -49,14 +49,14 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   const { $financesService } = useNuxtApp()
 
   if (event.data.id) {
-    await $financesService.edit(event.data.id, event.data as Category)
+    await $financesService.editCategory(event.data.id, event.data as Category)
     toast.add({
       title: 'Success',
       description: `Category ${event.data.title} updated`,
       color: 'success'
     })
   } else {
-    await $financesService.create(event.data as Category)
+    await $financesService.createCategory(event.data as Category)
     toast.add({
       title: 'Success',
       description: `New category ${event.data.title} added`,

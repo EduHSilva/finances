@@ -3,60 +3,69 @@ import DashLayout from '~/layouts/DashLayout.vue'
 import CustomHeader from '~/components/CustomHeader.vue'
 import ItemRecurrence from '~/components/recurrences/ItemRecurrence.vue'
 import ItemInstallments from '~/components/recurrences/ItemInstallments.vue'
+import type { Category, Recurrence } from '~/types'
+import AddRecurrenceModal from '~/components/recurrences/AddRecurrenceModal.vue'
 
-const response = ref({
-  recurrences: [
-    {
-      id: '',
-      title: 'Salario',
-      category: '',
-      frequency: 'Mensal',
-      income: true,
-      day: 10,
-      status: 'active',
-      value: 4500
-    },
-    {
-      id: '',
-      title: 'Aluguel',
-      category: 'Moradia',
-      frequency: 'Mensal',
-      income: false,
-      day: 10,
-      status: 'active',
-      value: 450
-    }
-  ],
-  installmentsPurchases: [
-    {
-      id: '',
-      title: 'iPhone',
-      category: 'Lazer',
-      value: 6000,
-      installments: 12,
-      pay: 3,
-      initDate: new Date('01/01/2026')
-    }, {
-      id: '',
-      title: 'Notebook',
-      category: 'Educação',
-      value: 4500,
-      installments: 10,
-      pay: 7,
-      initDate: new Date('01/01/2026')
-    }
-  ]
-})
+const data = ref()
+const recurrences = ref()
+const installmentsPurchases = ref()
+const { $financesService } = useNuxtApp()
+const categories = await $financesService.getCategories()
+
+const modalRef = ref<InstanceType<typeof AddRecurrenceModal> | null>(null)
+
+const selectedRecurrence = ref<Recurrence | null>(null)
+
+function openModal() {
+  modalRef.value?.openModal()
+}
+
+function openEditModal(category: Recurrence) {
+  selectedRecurrence.value = category
+  openModal()
+}
+
+function showNewRecurrence() {
+  selectedRecurrence.value = null
+  openModal()
+}
+
+async function refresh() {
+  const response = await $financesService.getRecurrences()
+  data.value = response.data.items as Recurrence[]
+
+  recurrences.value = data.value.filter((ele: Recurrence) => ele.type === 'MONTH')
+  installmentsPurchases.value = data.value.filter((ele: Recurrence) => ele.type !== 'MONTH')
+}
+
+async function confirmDelete(recurrence: Recurrence) {
+  await $financesService.deleteRecurrence(recurrence.id ?? '')
+  await refresh()
+}
+
+refresh()
 </script>
 
 <template>
   <DashLayout>
     <UDashboardPanel id="home">
       <template #header>
-        <CustomHeader />
+        <CustomHeader>
+          <UButton
+            :label="$t('newRecurrence')"
+            class="bg-primary dark:bg-primary-dark"
+            @click="showNewRecurrence"
+          />
+        </CustomHeader>
       </template>
 
       <template #body>
+        <AddRecurrenceModal
+          ref="modalRef"
+          :categories="categories.data.items"
+          :refresh="refresh"
+          :recurrency="selectedRecurrence"
+        />
         <div>
           <UPageCard
             variant="subtle"
@@ -65,11 +74,15 @@ const response = ref({
           >
             <div class="divide-y divide-default">
               <div
-                v-for="count in response.recurrences"
+                v-for="count in recurrences"
                 :key="count.id"
                 class="flex items-center justify-between py-3"
               >
-                <ItemRecurrence :recurrence="count" />
+                <ItemRecurrence
+                  :recurrence="count"
+                  @edit="openEditModal"
+                  @delete="confirmDelete"
+                />
               </div>
             </div>
           </UPageCard>
@@ -80,11 +93,15 @@ const response = ref({
           >
             <div class="divide-y divide-default">
               <div
-                v-for="count in response.installmentsPurchases"
+                v-for="count in installmentsPurchases"
                 :key="count.id"
                 class="flex items-center justify-between py-3"
               >
-                <ItemInstallments :recurrence="count" />
+                <ItemInstallments
+                  :recurrence="count"
+                  @edit="openEditModal"
+                  @delete="confirmDelete"
+                />
               </div>
             </div>
           </UPageCard>

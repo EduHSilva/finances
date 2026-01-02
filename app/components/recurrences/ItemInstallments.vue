@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { InstallmentItem } from '~/types'
+import type { InstallmentItem, Recurrence } from '~/types'
 
 const props = defineProps({
   recurrence: {
@@ -9,17 +9,21 @@ const props = defineProps({
 })
 
 const payedValue = computed(() =>
-  props.recurrence.value / props.recurrence.installments * props.recurrence.pay
+  props.recurrence.value / props.recurrence.installments * props.recurrence.payed
 )
 
 const progressLabel = computed(() =>
-  `${props.recurrence.pay}/${props.recurrence.installments}`
+  `${props.recurrence.payed}/${props.recurrence.installments}`
 )
+
+const emit = defineEmits<{
+  (e: 'edit', recurrence: Recurrence): void
+  (e: 'delete', recurrence: Recurrence): void
+}>()
 </script>
 
 <template>
   <div class="flex items-center justify-between gap-4 w-full">
-    <!-- ESQUERDA -->
     <div class="flex-1 flex flex-col gap-2">
       <div class="flex items-center gap-2">
         <UIcon
@@ -51,7 +55,6 @@ const progressLabel = computed(() =>
       </div>
     </div>
 
-    <!-- DIREITA -->
     <div class="flex items-center gap-3">
       <span class="font-semibold">
         {{ formatCurrency(props.recurrence.value) }}
@@ -59,8 +62,8 @@ const progressLabel = computed(() =>
 
       <UDropdownMenu
         :items="[
-          { label: $t('payInstallment'), icon: 'i-lucide-check-square' },
-          { label: $t('delete'), icon: 'i-lucide-trash', color: 'error' }
+          { label: $t('edit'), icon: 'i-lucide-edit', onSelect: () => emit('edit', recurrence) },
+          { label: $t('delete'), icon: 'i-lucide-trash', color: 'error', onSelect: () => emit('delete', recurrence) }
         ]"
         :content="{ align: 'end' }"
       >

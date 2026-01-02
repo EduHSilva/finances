@@ -10,7 +10,7 @@ const { $financesService } = useNuxtApp()
 const data = ref()
 
 async function confirmDelete(category: Category) {
-  await $financesService.delete(category.id)
+  await $financesService.deleteCategory(category.id)
   await refresh()
 }
 

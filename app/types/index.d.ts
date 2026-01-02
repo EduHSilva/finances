@@ -21,14 +21,17 @@ export interface Category {
 }
 
 export interface Recurrence {
-  id: string
+  id?: string
   title: string
-  category: string
+  categoryID?: string
+  category?: string
   value: number
-  status: string
+  status?: string
   income: boolean
-  frequency: string
+  type: string
   day: number
+  installments?: number
+  payed?: number
 }
 
 export interface InstallmentItem {
@@ -37,7 +40,7 @@ export interface InstallmentItem {
   category: string
   value: number
   installments: number
-  pay: number
+  payed: number
 }
 
 export interface Mail {
