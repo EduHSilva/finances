@@ -54,5 +54,16 @@
   "editCategory": "Editar categoria",
   "editCategoryDesc": "Edite ou adicione uma nova categoria de gastos",
   "essential": "Essencial",
-  "recreation": "Lazer"
+  "recreation": "Lazer",
+  "attention": "Atenção",
+  "loginError": "Erro ao entrar. Por favor, verifique seus dados",
+  "date": "Data",
+  "filterTransactions": "Filtrar transações",
+  "status": "Status",
+  "newTransaction": "Nova transação",
+  "editTransactionDesc": "Edite os dados da transação",
+  "actions": "Ações",
+  "enterTitle": "Insira o titulo",
+  "enterValue": "Insira o valor",
+  "executionDate": "Data de execução"
 }

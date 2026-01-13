@@ -4,12 +4,14 @@ export type TransactionStatus = 'PENDING' | 'unsubscribed'
 export type SaleStatus = 'paid' | 'failed' | 'refunded'
 
 export interface Transaction {
-  id: number
+  id: string
   title: string
   value: number
-  date: Date
+  executionDate: string
   income: boolean
   status: TransactionStatus
+  categoryID?: string
+  classification?: string
 }
 
 export interface Category {

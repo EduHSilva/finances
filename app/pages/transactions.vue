@@ -6,6 +6,7 @@ import { getPaginationRowModel } from '@tanstack/table-core'
 import type { Transaction } from '~/types'
 import DashLayout from '~/layouts/DashLayout.vue'
 import CustomHeader from '~/components/CustomHeader.vue'
+import type AddCategoryModal from '~/components/categories/AddCategoryModal.vue'
 import AddTransactionModal from '~/components/transactions/AddTransactionModal.vue'
 
 const UButton = resolveComponent('UButton')
@@ -13,45 +14,49 @@ const UBadge = resolveComponent('UBadge')
 const UDropdownMenu = resolveComponent('UDropdownMenu')
 const UCheckbox = resolveComponent('UCheckbox')
 
-const toast = useToast()
 const table = useTemplateRef('table')
 
 const columnFilters = ref([{
-  id: 'email',
+  id: 'title',
   value: ''
 }])
-const columnVisibility = ref()
 const rowSelection = ref({ 1: true })
 
-const data = [
-  {
-    id: '1',
-    title: 'Account',
-    value: 1,
-    income: false,
-    status: 'PENDING',
-    classification: 'Essencial',
-    category: 'Saude'
-  },
-  {
-    id: '2',
-    title: 'Account',
-    value: 1,
-    income: false,
-    category: 'Saude',
-    status: 'PENDING',
-    classification: 'Essencial'
-  },
-  {
-    id: '3',
-    title: 'Account',
-    value: 1,
-    income: false,
-    category: 'Saude',
-    classification: 'Essencial',
-    status: 'PENDING'
-  }
-]
+const { $financesService } = useNuxtApp()
+
+const data = ref()
+
+async function confirmDelete(transaction: Transaction) {
+  await $financesService.deleteTransaction(transaction.id)
+  await refresh()
+}
+
+const modalRef = ref<InstanceType<typeof AddCategoryModal> | null>(null)
+
+const selectedTransaction = ref<Transaction | null>(null)
+
+function openModal() {
+  modalRef.value?.openModal()
+}
+
+const categories = await $financesService.getCategories()
+
+function openEditModal(transaction: Transaction) {
+  selectedTransaction.value = transaction
+  openModal()
+}
+
+function showNewTransaction() {
+  selectedTransaction.value = null
+  openModal()
+}
+
+async function refresh() {
+  const response = await $financesService.getTransactions()
+  data.value = response.data.items as Transaction[]
+}
+
+refresh()
 
 function getRowItems(row: Row<Transaction>) {
   return [
@@ -61,21 +66,26 @@ function getRowItems(row: Row<Transaction>) {
     },
     {
       label: $t('edit'),
-      icon: 'i-lucide-edit'
+      icon: 'i-lucide-edit',
+      onSelect() {
+        openEditModal(row.original)
+      }
     },
     {
       label: $t('delete'),
       icon: 'i-lucide-trash',
       color: 'error',
       onSelect() {
-        toast.add({
-          title: 'Customer deleted' + row.id + ' deleted',
-          description: 'The customer has been deleted.'
-        })
+        confirmDelete(row.original)
       }
     }
   ]
 }
+
+const columnVisibility = ref({
+  id: false
+})
+
 const columns: TableColumn<Transaction>[] = [
   {
     id: 'select',
@@ -104,35 +114,41 @@ const columns: TableColumn<Transaction>[] = [
 
   {
     accessorKey: 'title',
-    header: 'Title'
+    header: $t('title')
+  },
+  {
+    accessorKey: 'executionDate',
+    header: $t('date'),
+    cell: ({ row }) => `${formatDate(row.original.executionDate)}`
   },
   {
     accessorKey: 'category',
-    header: 'Category'
+    header: $t('category')
   },
   {
     accessorKey: 'classification',
-    header: 'Classification'
+    header: $t('classification'),
+    cell: ({ row }) => row.original.classification ? $t(row.original.classification.toLowerCase()) : ''
   },
   {
     accessorKey: 'value',
-    header: 'Value',
+    header: $t('value'),
     cell: ({ row }) => `R$ ${row.original.value}`
   },
 
   {
     accessorKey: 'income',
-    header: 'Tipo',
-    cell: ({ row }) => (row.original.income ? 'Entrada' : 'Saída')
+    header: $t('type'),
+    cell: ({ row }) => (row.original.income ? $t('income') : $t('expanse'))
   },
 
   {
     accessorKey: 'status',
-    header: 'Status',
+    header: $t('status'),
     filterFn: 'equals',
     cell: ({ row }) => {
       const color = {
-        subscribed: 'success' as const,
+        OK: 'success' as const,
         unsubscribed: 'error' as const,
         PENDING: 'warning' as const
       }[row.original.status]
@@ -184,12 +200,12 @@ watch(() => statusFilter.value, (newVal) => {
   }
 })
 
-const email = computed({
+const title = computed({
   get: (): string => {
-    return (table.value?.tableApi?.getColumn('email')?.getFilterValue() as string) || ''
+    return (table.value?.tableApi?.getColumn('title')?.getFilterValue() as string) || ''
   },
   set: (value: string) => {
-    table.value?.tableApi?.getColumn('email')?.setFilterValue(value || undefined)
+    table.value?.tableApi?.getColumn('title')?.setFilterValue(value || undefined)
   }
 })
 
@@ -201,20 +217,30 @@ const pagination = ref({
 
 <template>
   <DashLayout>
-    <UDashboardPanel id="customers">
+    <UDashboardPanel id="transactions">
       <template #header>
         <CustomHeader>
-          <AddTransactionModal />
+          <UButton
+            :label="$t('newTransaction')"
+            class="bg-primary dark:bg-primary-dark"
+            @click="showNewTransaction"
+          />
         </CustomHeader>
       </template>
 
       <template #body>
+        <AddTransactionModal
+          ref="modalRef"
+          :categories="categories.data.items"
+          :refresh="refresh"
+          :recurrency="selectedTransaction"
+        />
         <div class="flex flex-wrap items-center justify-between gap-1.5">
           <UInput
-            v-model="email"
+            v-model="title"
             class="max-w-sm"
             icon="i-lucide-search"
-            placeholder="Filter emails..."
+            :placeholder="$t('filterTransactions')"
           />
 
           <div class="flex flex-wrap items-center gap-1.5">

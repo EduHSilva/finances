@@ -51,8 +51,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   if (event.data.id) {
     await $financesService.editCategory(event.data.id, event.data as Category)
     toast.add({
-      title: 'Success',
-      description: `Category ${event.data.title} updated`,
+      title: $t('success'),
+      description: $t('update'),
       color: 'success'
     })
   } else {

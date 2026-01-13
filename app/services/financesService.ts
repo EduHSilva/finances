@@ -1,6 +1,6 @@
 import type { DefaultResponse } from '~/utils/types'
 import { getTokenCookie } from '~/utils/util'
-import type { Category, Recurrence } from '~/types'
+import type { Category, Recurrence, Transaction } from '~/types'
 
 export interface FinancesServiceOptions {
   apiUrl: string | unknown
@@ -23,10 +23,26 @@ export interface FinancesService {
 
   editRecurrence(id: string, category: Recurrence): Promise<DefaultResponse<Recurrence>>
 
+  getTransactions(): Promise<DefaultResponse<Page<Transaction>>>
+
+  deleteTransaction(id: string): Promise<DefaultResponse<void>>
+
+  editTransaction(id: string, transaction: Transaction): Promise<DefaultResponse<Transaction>>
+
+  createTransaction(transaction: Transaction): Promise<DefaultResponse<Transaction>>
 }
 
 export default function financesService({ apiUrl }: FinancesServiceOptions): FinancesService {
   return {
+    async createTransaction(transaction: Transaction): Promise<DefaultResponse<Transaction>> {
+      return await $fetch(`${apiUrl}transactions`, {
+        headers: {
+          Authorization: 'Bearer ' + getTokenCookie().value?.token
+        },
+        method: 'POST',
+        body: transaction
+      })
+    },
     async createCategory(category: Category): Promise<DefaultResponse<Category>> {
       return await $fetch(`${apiUrl}categories`, {
         headers: {
@@ -67,6 +83,16 @@ export default function financesService({ apiUrl }: FinancesServiceOptions): Fin
       })
     },
 
+    async editTransaction(id: string, transaction: Transaction): Promise<DefaultResponse<Transaction>> {
+      return await $fetch(`${apiUrl}transactions/${id}`, {
+        headers: {
+          Authorization: 'Bearer ' + getTokenCookie().value?.token
+        },
+        method: 'PUT',
+        body: transaction
+      })
+    },
+
     async getCategories() {
       return await $fetch(`${apiUrl}categories`, {
         headers: {
@@ -77,6 +103,14 @@ export default function financesService({ apiUrl }: FinancesServiceOptions): Fin
 
     async getRecurrences() {
       return await $fetch(`${apiUrl}recurrences`, {
+        headers: {
+          Authorization: 'Bearer ' + getTokenCookie().value?.token
+        }
+      })
+    },
+
+    async getTransactions() {
+      return await $fetch(`${apiUrl}transactions`, {
         headers: {
           Authorization: 'Bearer ' + getTokenCookie().value?.token
         }
@@ -94,6 +128,14 @@ export default function financesService({ apiUrl }: FinancesServiceOptions): Fin
 
     async deleteRecurrence(id: string): Promise<DefaultResponse<void>> {
       return await $fetch(`${apiUrl}recurrences/${id}`, {
+        headers: {
+          Authorization: 'Bearer ' + getTokenCookie().value?.token
+        },
+        method: 'DELETE'
+      })
+    },
+    async deleteTransaction(id: string): Promise<DefaultResponse<void>> {
+      return await $fetch(`${apiUrl}transactions/${id}`, {
         headers: {
           Authorization: 'Bearer ' + getTokenCookie().value?.token
         },

@@ -3,7 +3,7 @@ import DashLayout from '~/layouts/DashLayout.vue'
 import CustomHeader from '~/components/CustomHeader.vue'
 import ItemRecurrence from '~/components/recurrences/ItemRecurrence.vue'
 import ItemInstallments from '~/components/recurrences/ItemInstallments.vue'
-import type { Category, Recurrence } from '~/types'
+import type { Recurrence } from '~/types'
 import AddRecurrenceModal from '~/components/recurrences/AddRecurrenceModal.vue'
 
 const data = ref()

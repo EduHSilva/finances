@@ -51,7 +51,7 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
     if (!data) {
       toast.add({
         title: $t('attention'),
-        description: $t('errors.loginError'),
+        description: $t('loginError'),
         icon: 'i-lucide-calendar-days'
       })
     } else {
@@ -65,7 +65,7 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
     console.error(e)
     toast.add({
       title: $t('attention'),
-      description: $t('errors.loginError'),
+      description: $t('loginError'),
       icon: 'i-lucide-calendar-days'
     })
   }
